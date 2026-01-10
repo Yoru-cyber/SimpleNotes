@@ -1,14 +1,26 @@
 import { Tabs } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { initDatabase } from "../services/noteService";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const [dbLoaded, setDbLoaded] = useState(false);
 
+  useEffect(() => {
+    try {
+      initDatabase();
+      setDbLoaded(true);
+    } catch (e) {
+      console.error("Failed to init DB", e);
+    }
+  }, []);
+
+  if (!dbLoaded) return null;
   return (
     <Tabs
       screenOptions={{

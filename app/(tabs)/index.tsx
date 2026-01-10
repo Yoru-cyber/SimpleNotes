@@ -1,8 +1,11 @@
-import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { Alert, FlatList, Modal, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 
+import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import NoteCard from "@/components/ui/NoteCard";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { useState } from "react";
+import { useNotes } from "../hooks/useNotes";
 const FAKE_NOTES = [
   {
     id: "1",
@@ -36,23 +39,69 @@ const FAKE_NOTES = [
   },
 ];
 export default function HomeScreen() {
+  const { notes, addNote, deleteNote } = useNotes();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const handleSave = () => {
+    if (!title.trim()) {
+      Alert.alert("Error", "Please enter a title");
+      return;
+    }
+    addNote(title, body);
+    setTitle('');
+    setBody('');
+    setModalVisible(false);
+  };
   return (
     <ThemedView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {FAKE_NOTES.map((note) => (
-          <NoteCard
-            key={note.id}
-            title={note.title}
-            body={note.body}
-            date={note.date}
-          />
-        ))}
-      </ScrollView>
-      <TouchableOpacity
-        style={[styles.fab, { backgroundColor: "#007AFF" }]}
-        onPress={() => console.log("Add note pressed")}
-        activeOpacity={0.7}
+      <FlatList
+        data={notes}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <NoteCard title={item.title} body={item.body} date={item.date} id={item.id} deleteFunction={deleteNote} />
+        )}
+      />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
       >
+        <View style={styles.modalOverlay}>
+          <ThemedView style={styles.modalContent}>
+            <ThemedText type="subtitle">New Note</ThemedText>
+
+            <TextInput
+              style={styles.input}
+              placeholder="Title"
+              placeholderTextColor="#888"
+              value={title}
+              onChangeText={setTitle}
+            />
+
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              placeholder="Start typing..."
+              placeholderTextColor="#888"
+              value={body}
+              onChangeText={setBody}
+              multiline
+            />
+
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.button}>
+                <ThemedText>Cancel</ThemedText>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={handleSave} style={[styles.button, styles.saveButton]}>
+                <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>Save</ThemedText>
+              </TouchableOpacity>
+            </View>
+          </ThemedView>
+        </View>
+      </Modal>
+      <TouchableOpacity onPress={() => setModalVisible(true)} style={[styles.fab, { backgroundColor: "#007AFF" }]}>
         <IconSymbol name="plus" size={32} color="white" />
       </TouchableOpacity>
     </ThemedView>
@@ -106,5 +155,42 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     opacity: 0.8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end', // Slides up from bottom
+  },
+  modalContent: {
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    minHeight: '50%',
+    gap: 15,
+  },
+  input: {
+    fontSize: 16,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: '#80808010',
+    color: '#fff', // Note: use your theme color logic here
+  },
+  textArea: {
+    height: 150,
+    textAlignVertical: 'top',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 10,
+    marginTop: 10,
+  },
+  button: {
+    padding: 12,
+    borderRadius: 8,
+  },
+  saveButton: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 20,
   },
 });
