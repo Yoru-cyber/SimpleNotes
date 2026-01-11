@@ -1,7 +1,9 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { config } from '@/tamagui.config';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { TamaguiProvider } from '@tamagui/core';
 import { drizzle } from 'drizzle-orm/expo-sqlite/driver';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { Stack } from 'expo-router';
@@ -36,33 +38,35 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <ThemeProvider value={theme}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }} >
-          <Stack
-            screenOptions={{
-              headerStyle: {
-                backgroundColor: theme.colors.card,
-              },
-              headerTitleStyle: {
-                fontWeight: 'bold',
-              },
-              headerTransparent: false,
-            }}
-          >
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-            <Stack.Screen
-              name="notes/[id]"
-              options={{
-                headerTitle: "",
-                headerBackTitle: "Back",
-                headerShadowVisible: false
+      <TamaguiProvider config={config}>
+        <ThemeProvider value={theme}>
+          <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }} >
+            <Stack
+              screenOptions={{
+                headerStyle: {
+                  backgroundColor: theme.colors.card,
+                },
+                headerTitleStyle: {
+                  fontWeight: 'bold',
+                },
+                headerTransparent: false,
               }}
-            />
-          </Stack>
-          <StatusBar style="auto" />
-        </SafeAreaView>
-      </ThemeProvider>
+            >
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+              <Stack.Screen
+                name="notes/[id]"
+                options={{
+                  headerTitle: "",
+                  headerBackTitle: "Back",
+                  headerShadowVisible: false
+                }}
+              />
+            </Stack>
+            <StatusBar style="auto" />
+          </SafeAreaView>
+        </ThemeProvider>
+      </TamaguiProvider>
     </SafeAreaProvider>
   );
 }

@@ -1,9 +1,10 @@
 import { NoteService } from "@/services/noteService";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Note } from "../models/Note";
 
 export function useNotes() {
   const [notes, setNotes] = useState<Note[]>([]);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false); // New toggle state
 
   const refreshNotes = useCallback(async () => {
     try {
@@ -18,13 +19,25 @@ export function useNotes() {
     refreshNotes();
   }, [refreshNotes]);
 
+  const displayedNotes = useMemo(() => {
+    if (showFavoritesOnly) {
+      return notes.filter((note) => note.favorite);
+    }
+    return notes;
+  }, [notes, showFavoritesOnly]);
+
   const addNote = async (title: string, body: string) => {
     await NoteService.add(title, body);
-    await refreshNotes(); 
+    await refreshNotes();
   };
 
-  const updateNote = async (id: number, title: string, body: string) => {
-    await NoteService.update(id, title, body);
+  const updateNote = async (
+    id: number,
+    title: string,
+    body: string,
+    favorite: boolean
+  ) => {
+    await NoteService.update(id, title, body, favorite);
     await refreshNotes();
   };
 
@@ -33,5 +46,13 @@ export function useNotes() {
     await refreshNotes();
   };
 
-  return { notes, addNote, refreshNotes, deleteNote, updateNote };
+  return {
+    notes: displayedNotes,
+    showFavoritesOnly,
+    setShowFavoritesOnly,
+    addNote,
+    refreshNotes,
+    deleteNote,
+    updateNote,
+  };
 }

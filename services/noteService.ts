@@ -31,8 +31,8 @@ export const NoteService = {
       .limit(1);
     return result[0] || null;
   },
-  update: async (id: number, title: string, body: string) => {
-    return await db.update(notes).set({ title, body }).where(eq(notes.id, id));
+  update: async (id: number, title: string, body: string, favorite: boolean) => {
+    return await db.update(notes).set({ title, body, favorite }).where(eq(notes.id, id));
   },
 
   delete: async (id: number) => {

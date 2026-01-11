@@ -1,22 +1,25 @@
-import { Alert, FlatList, Modal, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
-
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
 import NoteCard from "@/components/ui/NoteCard";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { Button } from '@tamagui/button';
+import { Text, Theme, View } from "@tamagui/core";
+import { Input, TextArea } from '@tamagui/input';
+import { XStack, YStack } from '@tamagui/stacks';
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
+import { Alert, FlatList, Modal, useColorScheme } from "react-native";
 import { useNotes } from "../../hooks/useNotes";
 export default function HomeScreen() {
-  const { notes, addNote, refreshNotes } = useNotes();
+  const { notes, addNote, refreshNotes, updateNote } = useNotes();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const colorScheme = useColorScheme();
   useFocusEffect(
     useCallback(() => {
       refreshNotes();
     }, [refreshNotes])
   );
-  const [modalVisible, setModalVisible] = useState(false);
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
+
   const handleSave = () => {
     if (!title.trim()) {
       Alert.alert("Error", "Please enter a title");
@@ -27,149 +30,115 @@ export default function HomeScreen() {
     setBody('');
     setModalVisible(false);
   };
+
   return (
-    <ThemedView style={styles.container}>
+    <YStack f={1} backgroundColor="$background" p="$4">
       <FlatList
         data={notes}
         keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={{ paddingBottom: 100 }}
         renderItem={({ item }) => (
-          <TouchableOpacity
+          <View
             onPress={() => router.push({ pathname: '/notes/[id]', params: { id: item.id.toString() } })}
+            mb="$3"
+            backgroundColor="transparent"
+            pressStyle={{ scale: 0.98, opacity: 0.9 }}
+            borderRadius={12}
+            overflow="hidden"
           >
-            <NoteCard {...item} />
-          </TouchableOpacity>
-          // <NoteCard title={item.title} body={item.body} date={item.date} id={item.id} deleteFunction={deleteNote} />
+            <NoteCard {...item} onToggleFavorite={() => {
+              updateNote(item.id, item.title, item.body, !item.favorite);
+            }} />
+          </View>
         )}
       />
+
+      <Button
+        onPress={() => setModalVisible(true)}
+        position="absolute"
+        bottom={30}
+        right={20}
+        width={64}
+        height={64}
+        borderRadius={32}
+        backgroundColor="#007AFF"
+        pressStyle={{ scale: 0.9, opacity: 0.8 }}
+        elevation={8}
+        shadowColor="$shadowColor"
+        p={0}
+      >
+        <IconSymbol name="plus" size={32} color="white" />
+      </Button>
+
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
-          <ThemedView style={styles.modalContent}>
-            <ThemedText type="subtitle">New Note</ThemedText>
+        <View f={1} backgroundColor="rgba(0,0,0,0.5)" jc="flex-end">
+          <Theme name={colorScheme === 'dark' ? 'dark' : 'light'}>
+            <YStack
+              backgroundColor="$background"
+              borderTopLeftRadius={25}
+              borderTopRightRadius={25}
+              p="$5"
+              pb="$10"
+              gap="$4"
+              minHeight="50%"
+              borderTopWidth={1}
+              borderColor="$borderColor"
+            >
+              <Text fontSize="$6" fontWeight="bold" color="$color">New Note</Text>
 
-            <TextInput
-              style={styles.input}
-              placeholder="Title"
-              placeholderTextColor="#888"
-              value={title}
-              onChangeText={setTitle}
-            />
+              <Input
+                placeholder="Title"
+                placeholderTextColor="$color10"
+                value={title}
+                onChangeText={setTitle}
+                size="$4"
+                backgroundColor="$backgroundHover"
+                borderColor="$borderColor"
+                color="$color"
+              />
 
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              placeholder="Start typing..."
-              placeholderTextColor="#888"
-              value={body}
-              onChangeText={setBody}
-              multiline
-            />
+              <TextArea
+                placeholder="Start typing..."
+                placeholderTextColor="$color10"
+                value={body}
+                textAlignVertical="top"
+                p={2}
+                onChangeText={setBody}
+                numberOfLines={10}
+                size="$4"
+                backgroundColor="$backgroundHover"
+                borderColor="$borderColor"
+                color="$color"
+              />
 
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.button}>
-                <ThemedText>Cancel</ThemedText>
-              </TouchableOpacity>
+              <XStack jc="flex-end" gap="$3" mt="$2">
+                <Button
+                  onPress={() => setModalVisible(false)}
+                  backgroundColor="$backgroundFocus"
+                  color="$color"
+                >
+                  Cancel
+                </Button>
 
-              <TouchableOpacity onPress={handleSave} style={[styles.button, styles.saveButton]}>
-                <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>Save</ThemedText>
-              </TouchableOpacity>
-            </View>
-          </ThemedView>
+                <Button
+                  onPress={handleSave}
+                  backgroundColor="#007AFF"
+                  color="white"
+                  fontWeight="bold"
+                  px="$5"
+                >
+                  Save
+                </Button>
+              </XStack>
+            </YStack>
+          </Theme>
         </View>
       </Modal>
-      <TouchableOpacity onPress={() => setModalVisible(true)} style={[styles.fab, { backgroundColor: "#007AFF" }]}>
-        <IconSymbol name="plus" size={32} color="white" />
-      </TouchableOpacity>
-    </ThemedView>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  fab: {
-    position: "absolute",
-    bottom: 30, // Distance from bottom
-    right: 30, // Distance from right
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    justifyContent: "center",
-    alignItems: "center",
-    // Shadow for iOS
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    // Elevation for Android
-    elevation: 8,
-  },
-  scrollContent: {
-    padding: 20,
-    gap: 12,
-  },
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: "center",
-  },
-  noteCard: {
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#cccccc33",
-    backgroundColor: "#80808010",
-    gap: 4,
-  },
-  noteTitle: {
-    fontWeight: "bold",
-  },
-  noteDate: {
-    fontSize: 12,
-    opacity: 0.6,
-    marginBottom: 4,
-  },
-  noteBody: {
-    fontSize: 14,
-    lineHeight: 20,
-    opacity: 0.8,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end', // Slides up from bottom
-  },
-  modalContent: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 20,
-    minHeight: '50%',
-    gap: 15,
-  },
-  input: {
-    fontSize: 16,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: '#80808010',
-    color: '#fff', // Note: use your theme color logic here
-  },
-  textArea: {
-    height: 150,
-    textAlignVertical: 'top',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 10,
-    marginTop: 10,
-  },
-  button: {
-    padding: 12,
-    borderRadius: 8,
-  },
-  saveButton: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 20,
-  },
-});
