@@ -21,6 +21,7 @@ const MAPPING = {
   'star.fill': 'star',
   'plus': 'add',
   'trash': 'delete',
+  'pencil': 'edit',
 } as IconMapping;
 
 /**

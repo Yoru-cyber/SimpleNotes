@@ -1,15 +1,12 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { IconSymbol } from "./icon-symbol";
 type NoteCardProps = {
-  id?: number;
   title: string;
   date: string;
   body: string;
   favorited?: boolean;
-  deleteFunction?: (id: number) => void;
 };
 export default function NoteCard(props: NoteCardProps) {
   return (
@@ -23,9 +20,7 @@ export default function NoteCard(props: NoteCardProps) {
         <ThemedText numberOfLines={2} style={styles.noteBody}>
           {props.body}
         </ThemedText>
-        <TouchableOpacity style={styles.cancelBtn} onPress={() => props.deleteFunction?.(props.id!)}>
-          <IconSymbol name="trash" size={32} color="red" />
-        </TouchableOpacity>
+
       </ThemedView>
     </ThemedView>
   );

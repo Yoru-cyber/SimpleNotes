@@ -4,42 +4,16 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import NoteCard from "@/components/ui/NoteCard";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { useState } from "react";
-import { useNotes } from "../hooks/useNotes";
-const FAKE_NOTES = [
-  {
-    id: "1",
-    title: "Grocery List",
-    body: "Milk, organic eggs, sourdough bread, and avocados for the weekend brunch.",
-    date: "Jan 10, 2026",
-  },
-  {
-    id: "2",
-    title: "Project Ideas",
-    body: "Build a React Native app that uses AI to organize handwritten notes into categories.",
-    date: "Jan 08, 2026",
-  },
-  {
-    id: "3",
-    title: "Workout Routine",
-    body: "Monday: Chest and Triceps. Wednesday: Back and Biceps. Friday: Legs and Shoulders.",
-    date: "Jan 05, 2026",
-  },
-  {
-    id: "4",
-    title: "Meeting Notes",
-    body: 'The client wants the logo to be "more pop" and the primary color shifted to a deeper blue.',
-    date: "Dec 28, 2025",
-  },
-  {
-    id: "5",
-    title: "Gift Ideas",
-    body: "Noise-canceling headphones for Sarah, a mechanical keyboard for Mike.",
-    date: "Dec 20, 2025",
-  },
-];
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
+import { useNotes } from "../../hooks/useNotes";
 export default function HomeScreen() {
-  const { notes, addNote, deleteNote } = useNotes();
+  const { notes, addNote, refreshNotes } = useNotes();
+  useFocusEffect(
+    useCallback(() => {
+      refreshNotes();
+    }, [refreshNotes])
+  );
   const [modalVisible, setModalVisible] = useState(false);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
@@ -59,7 +33,12 @@ export default function HomeScreen() {
         data={notes}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <NoteCard title={item.title} body={item.body} date={item.date} id={item.id} deleteFunction={deleteNote} />
+          <TouchableOpacity
+            onPress={() => router.push({ pathname: '/notes/[id]', params: { id: item.id.toString() } })}
+          >
+            <NoteCard {...item} />
+          </TouchableOpacity>
+          // <NoteCard title={item.title} body={item.body} date={item.date} id={item.id} deleteFunction={deleteNote} />
         )}
       />
       <Modal
