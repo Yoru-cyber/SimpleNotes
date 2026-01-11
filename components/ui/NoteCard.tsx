@@ -1,7 +1,7 @@
-import { StyleSheet } from "react-native";
-
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { StyleSheet } from "react-native";
+import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
 type NoteCardProps = {
   title: string;
   date: string;
@@ -10,19 +10,25 @@ type NoteCardProps = {
 };
 export default function NoteCard(props: NoteCardProps) {
   return (
-    <ThemedView style={styles.container}>
-      <ThemedView style={styles.noteCard}>
-        <ThemedText type="subtitle" style={styles.noteTitle}>
-          {props.title}
-        </ThemedText>
-        <ThemedText style={styles.noteDate}>{props.date}</ThemedText>
+    <Animated.View
+      entering={FadeIn}
+      exiting={FadeOut}
+      layout={LinearTransition.springify()}
+    >
+      <ThemedView style={styles.container}>
+        <ThemedView style={styles.noteCard}>
+          <ThemedText type="subtitle" style={styles.noteTitle}>
+            {props.title}
+          </ThemedText>
+          <ThemedText style={styles.noteDate}>{props.date}</ThemedText>
 
-        <ThemedText numberOfLines={2} style={styles.noteBody}>
-          {props.body}
-        </ThemedText>
+          <ThemedText numberOfLines={2} style={styles.noteBody}>
+            {props.body}
+          </ThemedText>
 
+        </ThemedView>
       </ThemedView>
-    </ThemedView>
+    </Animated.View>
   );
 }
 
