@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 
 import { Button } from '@tamagui/button';
-import { Text } from '@tamagui/core';
+import { Text, useTheme } from '@tamagui/core';
 import { Input, TextArea } from '@tamagui/input';
 import { ScrollView } from '@tamagui/scroll-view';
 import { XStack, YStack } from '@tamagui/stacks';
@@ -21,7 +21,8 @@ export default function NoteDetailScreen() {
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
     const [favorite, setFavorite] = useState(false);
-
+    const theme = useTheme();
+    const accentColor = theme.accent?.val
     const getNote = async () => {
         try {
             const data = await NoteService.get(idInt);
@@ -120,7 +121,7 @@ export default function NoteDetailScreen() {
                                     onPress={() => setIsEditing(true)}
                                     pressStyle={{ opacity: 0.5 }}
                                 >
-                                    <IconSymbol name="pencil" size={22} color="#007AFF" />
+                                    <IconSymbol name="pencil" size={22} color={accentColor} />
                                 </Button>
                             </>
                         ) : (
@@ -129,15 +130,18 @@ export default function NoteDetailScreen() {
                                     size="$3"
                                     chromeless
                                     onPress={handleCancel}
+                                    color="$color"
+                                    opacity={0.7}
                                 >
-                                    <Text color="#f21919" fontWeight="bold" fontSize="$5">Cancel</Text>
+                                        <Text backgroundColor="$backgroundFocus"
+                                            color="$color" fontWeight="bold" fontSize="$5">Cancel</Text>
                                 </Button>
                                 <Button
                                     size="$3"
                                     chromeless
                                     onPress={handleSave}
                                 >
-                                    <Text color="#007AFF" fontWeight="bold" fontSize="$5">Save</Text>
+                                    <Text color="$accent" fontWeight="bold" fontSize="$5">Save</Text>
                                 </Button>
                             </>
                         )}

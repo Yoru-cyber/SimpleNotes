@@ -5,15 +5,21 @@ import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useTheme } from "@tamagui/core";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const theme = useTheme();
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarStyle: {
+          backgroundColor: theme.black2.val,
+        },
         headerShown: false,
         tabBarButton: HapticTab,
+        animation: 'shift',
       }}
     >
       <Tabs.Screen

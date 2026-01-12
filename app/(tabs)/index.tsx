@@ -1,12 +1,13 @@
 import NoteCard from "@/components/ui/NoteCard";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Button } from '@tamagui/button';
-import { Text, Theme, View } from "@tamagui/core";
+import { Text, View } from "@tamagui/core";
 import { Input, TextArea } from '@tamagui/input';
+import { Sheet } from "@tamagui/sheet";
 import { XStack, YStack } from '@tamagui/stacks';
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { Alert, FlatList, Modal, useColorScheme } from "react-native";
+import { Alert, FlatList, useColorScheme } from "react-native";
 import { useNotes } from "../../hooks/useNotes";
 export default function HomeScreen() {
   const { notes, addNote, refreshNotes, updateNote } = useNotes();
@@ -19,7 +20,6 @@ export default function HomeScreen() {
       refreshNotes();
     }, [refreshNotes])
   );
-
   const handleSave = () => {
     if (!title.trim()) {
       Alert.alert("Error", "Please enter a title");
@@ -61,29 +61,31 @@ export default function HomeScreen() {
         width={64}
         height={64}
         borderRadius={32}
-        backgroundColor="#007AFF"
-        pressStyle={{ scale: 0.9, opacity: 0.8 }}
+        backgroundColor="$accent"
+        pressStyle={{ scale: 0.9, opacity: 0.8, backgroundColor: '$accentColorHover' }}
         elevation={8}
         shadowColor="$shadowColor"
         p={0}
       >
         <IconSymbol name="plus" size={32} color="white" />
       </Button>
-
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
+      <Sheet
+        modal
+        open={modalVisible}
+        onOpenChange={setModalVisible}
+        snapPoints={[90]}
+        animation="quick"
       >
-        <View f={1} backgroundColor="rgba(0,0,0,0.5)" jc="flex-end">
-          <Theme name={colorScheme === 'dark' ? 'dark' : 'light'}>
+        <Sheet.Overlay />
+        <Sheet.Handle />
+        <Sheet.Frame padding="$1">
+          <View f={1} backgroundColor="$background" jc="flex-start">
             <YStack
               backgroundColor="$background"
               borderTopLeftRadius={25}
               borderTopRightRadius={25}
               p="$5"
-              pb="$10"
+              pb="$5"
               gap="$4"
               minHeight="50%"
               borderTopWidth={1}
@@ -120,6 +122,7 @@ export default function HomeScreen() {
                 <Button
                   onPress={() => setModalVisible(false)}
                   backgroundColor="$backgroundFocus"
+                  pressStyle={{ scale: 0.9, opacity: 0.8}}
                   color="$color"
                 >
                   Cancel
@@ -127,7 +130,8 @@ export default function HomeScreen() {
 
                 <Button
                   onPress={handleSave}
-                  backgroundColor="#007AFF"
+                  backgroundColor="$accent"
+                  pressStyle={{ scale: 0.9, opacity: 0.8, backgroundColor: '$accentColorHover' }}
                   color="white"
                   fontWeight="bold"
                   px="$5"
@@ -136,9 +140,9 @@ export default function HomeScreen() {
                 </Button>
               </XStack>
             </YStack>
-          </Theme>
-        </View>
-      </Modal>
+          </View>
+        </Sheet.Frame>
+      </Sheet>
     </YStack>
   );
 }

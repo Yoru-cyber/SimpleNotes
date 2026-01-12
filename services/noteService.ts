@@ -1,11 +1,7 @@
-// services/noteService.ts
 import { desc, eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/expo-sqlite";
-import { openDatabaseSync } from "expo-sqlite";
 import { notes } from "../db/schema";
 
-const expoDb = openDatabaseSync("notes.db");
-const db = drizzle(expoDb);
+import { db } from "@/lib/db";
 
 export const NoteService = {
   getAll: async () => {
@@ -31,8 +27,16 @@ export const NoteService = {
       .limit(1);
     return result[0] || null;
   },
-  update: async (id: number, title: string, body: string, favorite: boolean) => {
-    return await db.update(notes).set({ title, body, favorite }).where(eq(notes.id, id));
+  update: async (
+    id: number,
+    title: string,
+    body: string,
+    favorite: boolean
+  ) => {
+    return await db
+      .update(notes)
+      .set({ title, body, favorite })
+      .where(eq(notes.id, id));
   },
 
   delete: async (id: number) => {
