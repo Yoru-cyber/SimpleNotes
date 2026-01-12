@@ -20,7 +20,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.SimpleNotes"
+      "package": "com.yorucyber.SimpleNotes"
     },
     "web": {
       "output": "static",

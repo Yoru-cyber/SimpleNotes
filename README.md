@@ -1,50 +1,115 @@
-# Welcome to your Expo app 👋
+# 📝 Simple Notes
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A sleek, offline-first note-taking app built with **React Native**, **Expo**, and **Tamagui** — featuring smooth animations, and a fully native feel on both iOS and Android.
 
-## Get started
+---
 
-1. Install dependencies
+## ✨ Features
 
-   ```bash
-   npm install
-   ```
+- **Smooth Animations**:
+  - Slide transitions between tabs
+  - Spring-based modal sheets with gesture support
+  - Press feedback on all interactive elements
+- **Offline-First**: All notes stored locally using **SQLite** via **Drizzle ORM**
+- **Responsive Design**: Works beautifully on phones and tablets
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
+## 🛠 Tech Stack
 
-In the output, you'll find options to open the app in a
+| Layer          | Technology                                  |
+| -------------- | ------------------------------------------- |
+| **Framework**  | React Native + Expo SDK 51                  |
+| **Styling**    | Tamagui (v1.90+) with dynamic theme support |
+| **Database**   | SQLite via `expo-sqlite` + Drizzle ORM      |
+| **Navigation** | Expo Router (file-based)                    |
+| **State**      | React hooks + MMKV for persistent settings  |
+| **Animations** | Reanimated v3                               |
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 📱 Screens
 
-## Get a fresh project
+### Home Screen
 
-When you're ready, run:
+- Scrollable list of notes with preview
+- Tap to view/edit
+- Favorite toggle with smooth animation
+
+### Note Editor (Modal Sheet)
+
+- Clean, focused writing experience
+- Title + body inputs with auto-save
+- Cancel/Save actions with themed buttons
+- Keyboard-aware layout (content scrolls when needed)
+
+### Tab Navigation
+
+- **Home** → view all notes
+- **Favorites** → view starred notes only
+- Smooth horizontal slide transition between tabs
+
+## 🚀 Development
+
+### Prerequisites
+
+- Node.js 18+
+- Expo CLI: `npm install -g @expo/cli`
+- EAS CLI (for builds): `npm install -g eas-cli`
+
+### Setup
 
 ```bash
-npm run reset-project
+git clone https://github.com/Yoru-cyber/SimpleNotes
+cd SimpleNotes
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Run Dev Build
 
-## Learn more
+```bash
+# Start dev server
+npx expo start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+> ⚠️ **Important**: Use a **development build** (not Expo Go) to test:
+>
+> - Custom package/bundle ID
+> - Persistent database across sessions
+> - True native performance
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+---
 
-## Join the community
+## 📦 Database Management
 
-Join our community of developers creating universal apps.
+- Schema managed via **Drizzle ORM**
+- Migrations run automatically on app launch
+- Database file: `notes.db` in app documents directory
+- To backup your notes:
+  - manually extract from device (iOS Simulator / Android Device Explorer)
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+## 🎯 Future Ideas
+
+- Encryptation
+- Cloud sync (Firebase/Supabase)
+- Markdown support
+- Search & tags
+- Widgets (iOS/Android)
+- Dark mode scheduling
+
+---
+
+## 📄 License
+
+GNU GENERAL PUBLIC LICENSE Version 3
+
+See `LICENSE` for more info.
+
+---
+
+> Made with ❤️ using Expo, Tamagui, and Drizzle ORM  
+> Designed for simplicity, speed, and personal taste
+
+![Chopper Jumping](https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExMWtpeTMwa203cmplMjk0cDJ6dXdtaDRjb3R2eWsxbm4ydWpzd2t4biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/R548B8WxpUTsI/giphy.gif)
